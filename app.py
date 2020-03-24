@@ -81,12 +81,11 @@ def handle_message(event):
         gpid = event.source.group_id
         mbid = event.source.user_id
         gp = group(gpid)
-        mb = gp.member[mbid]
         gp.exp_up(mbid)
         if event.message.type == 'text':
             msg = event.message.text
             if msg == "自爆":
-                if mb["level"] >= 5:
+                if gp.member[mbid]["level"] >= 5:
                     gp.txt.append("再...再見")
                     gp.reply(rptoken)
                     line_bot_api.leave_group(gpid)
