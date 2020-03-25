@@ -1,8 +1,5 @@
-<<<<<<< HEAD
 import json, math
 
-=======
->>>>>>> init
 from flask import Flask, request, abort
 
 from linebot import (
@@ -20,10 +17,10 @@ line_bot_api = LineBotApi('9s1z4LRXBjXJbWjspPAtxyL1tER6EiwK+lhg/Rq1tUaSmh3uRbC5g
 # Channel Secret
 handler = WebhookHandler('df0b3a4ecb874a0727a45a8456ec6991')
 
-<<<<<<< HEAD
 class group():
-    def __init__(self, gpid):
+    def __init__(self, gpid, mbid):
         data = gpid + ".json"
+        self.txt = []
         if os.path.isfile(data):
             with open(data, "r") as f:
                 x = json.load(f)
@@ -33,7 +30,7 @@ class group():
         else:
             self.gpid = gpid
             self.member = {}
-        self.txt = []
+        self.exp_up(mbid)
     
     def save(self):
         data = self.gpid + ".json"
@@ -62,8 +59,6 @@ class group():
                 self.txt.append("%s 等級提升到 %d !" % (pof.display_name, self.member[mbid]["level"]))
         self.save()
 
-=======
->>>>>>> init
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -82,14 +77,12 @@ def callback():
 # 處理訊息
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-<<<<<<< HEAD
     rptoken = event.reply_token
     if event.source.type == 'group':
-        gpid = event.source.group_id
-        mbid = event.source.user_id
-        gp = group(gpid)
-        gp.exp_up(mbid)
         if event.message.type == 'text':
+            gpid = event.source.group_id
+            mbid = event.source.user_id
+            gp = group(gpid, mbid)
             msg = event.message.text
             if msg == "自爆":
                 if gp.member[mbid]["level"] >= 5:
@@ -98,26 +91,16 @@ def handle_message(event):
                     line_bot_api.leave_group(gpid)
                 else:
                     gp.txt.append("你太弱了!")
-                    gp.reply(rptoken)
+                    gpid = event.source.group_id
+                gp.reply(retoken)
             else:
-                if msg =="妳好" or msg == "你好":
-                    pof = line_bot_api.get_profile(mbid)
-                    gp.txt.append("你好 " + pof.display_name)
-                elif msg == "#me":
+                if msg == "#me":
                     pof = line_bot_api.get_profile(mbid)
                     x = gp.member[mbid]
                     gp.txt.append("name => %s\nlevel => %d\nexp => %d" % (pof.display_name,x["level"],x["exp"]))
-                gp.reply(rptoken)             
-=======
-    message = TextSendMessage(text=event.message.text)
-    line_bot_api.reply_message(event.reply_token, message)
->>>>>>> init
+                gp.reply(rptoken)
 
 import os
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
-<<<<<<< HEAD
     app.run(host='0.0.0.0', port=port)
-=======
-    app.run(host='0.0.0.0', port=port)
->>>>>>> init
