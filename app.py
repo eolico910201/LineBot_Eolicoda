@@ -92,12 +92,11 @@ def handle_message(event):
                 else:
                     gp.txt.append("你太弱了!")
                     gpid = event.source.group_id
-                gp.reply(retoken)
-            else:
-                if msg == "#me":
-                    pof = line_bot_api.get_profile(mbid)
-                    x = gp.member[mbid]
-                    gp.txt.append("name => %s\nlevel => %d\nexp => %d" % (pof.display_name,x["level"],x["exp"]))
+                    gp.reply(retoken)
+            elif msg == "#me":
+                pof = line_bot_api.get_profile(mbid)
+                x = gp.member[mbid]
+                gp.txt.append("name => %s\nlevel => %d\nexp => %d" % (pof.display_name,x["level"],x["exp"]))
                 gp.reply(rptoken)
 
 import os
