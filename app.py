@@ -1,5 +1,13 @@
+<<<<<<< HEAD
+<<<<<<< HEAD
 import json, math
 
+=======
+>>>>>>> init
+=======
+import json, math
+
+>>>>>>> basic
 from flask import Flask, request, abort
 
 from linebot import (
@@ -17,6 +25,10 @@ line_bot_api = LineBotApi('9s1z4LRXBjXJbWjspPAtxyL1tER6EiwK+lhg/Rq1tUaSmh3uRbC5g
 # Channel Secret
 handler = WebhookHandler('df0b3a4ecb874a0727a45a8456ec6991')
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> basic
 class group():
     def __init__(self, gpid):
         data = gpid + ".json"
@@ -58,6 +70,11 @@ class group():
                 self.txt.append("%s 等級提升到 %d !" % (pof.display_name, self.member[mbid]["level"]))
         self.save()
 
+<<<<<<< HEAD
+=======
+>>>>>>> init
+=======
+>>>>>>> basic
 # 監聽所有來自 /callback 的 Post Request
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -76,6 +93,10 @@ def callback():
 # 處理訊息
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> basic
     rptoken = event.reply_token
     if event.source.type == 'group':
         gpid = event.source.group_id
@@ -100,9 +121,21 @@ def handle_message(event):
                     pof = line_bot_api.get_profile(mbid)
                     x = gp.member[mbid]
                     gp.txt.append("name => %s\nlevel => %d\nexp => %d" % (pof.display_name,x["level"],x["exp"]))
+<<<<<<< HEAD
                 gp.reply(rptoken)             
+=======
+    message = TextSendMessage(text=event.message.text)
+    line_bot_api.reply_message(event.reply_token, message)
+>>>>>>> init
+=======
+                gp.reply(rptoken) 
+>>>>>>> basic
 
 import os
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
+<<<<<<< HEAD
     app.run(host='0.0.0.0', port=port)
+=======
+    app.run(host='0.0.0.0', port=port)
+>>>>>>> init
