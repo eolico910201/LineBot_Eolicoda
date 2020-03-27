@@ -6,8 +6,8 @@
 -新增 "聊天等級" 功能  
 
 ## 2020/03/25
--整體重製
--新增 "確認好友" 功能
+-整體重製  
+-新增 "確認好友" 功能  
 
 ## 參考資料
 -[Python基礎教程](https://www.runoob.com/python/python-tutorial.html)  
