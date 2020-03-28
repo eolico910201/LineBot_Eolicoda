@@ -18,6 +18,11 @@
 -新增 "討罰BOSS" 功能  
 -新增 "接龍" 功能   
 
+## 2020/03/29
+-整體重製  
+-新增 "改名" 功能
+-修改 "自爆" 機制
+
 ## 參考資料
 -[Python基礎教程](https://www.runoob.com/python/python-tutorial.html)  
 -[LineBot+Python，輕鬆建立聊天機器人](https://yaoandy107.github.io/line-bot-tutorial/)  
