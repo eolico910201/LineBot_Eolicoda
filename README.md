@@ -20,8 +20,8 @@
 
 ## 2020/03/29
 -整體重製  
--新增 "改名" 功能
--修改 "自爆" 機制
+-新增 "改名" 功能  
+-修改 "自爆" 機制  
 
 ## 參考資料
 -[Python基礎教程](https://www.runoob.com/python/python-tutorial.html)  
