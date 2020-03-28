@@ -24,31 +24,33 @@ def check_friend(usid):
     except:
         return False
 
-class group():
-    def __init__(self, gpid, usid):
-        data = gpid + ".json"
+class user():
+    def __init__(self, usid):
+        data = usid + ".json"
         if os.path.isfile(data):
             with open(data, 'r') as f:
                 x = json.load(f)
-                self.member = x["member"]
-                self.hp = x["hp"]
-                #self.dmg_cd = x["dmg_cd"]
+                self.level = x["level"]
+                self.exp = x["exp"]
+                self.name = x["name"]
         else:
-            self.member = {}
-            self.hp = 10000
-            self.death = False
-            #self.dmg_cd = {}
+            self.level = 1
+            self.exp = 0
+            pof = check_friend(usid)
+            if pof:
+                self.name = pof.display_name
+            else:
+                self.name = ""
         self.txt = []
-        self.flag = check_friend(usid)
         self.exp_up(usid, 1)
-        self.save(gpid)
+        self.save(usid)
 
-    def save(self, gpid):
-        data = gpid + ".json"
+    def save(self, usid):
+        data = usid + ".json"
         x = {
-             "member" : self.member,
-             "hp" : self.hp
-             #"dmg_cd" : self.dmg_cd
+                "level" : self.level,
+                "exp" : self.exp,
+                "name" : self.name
             }
         with open(data, 'w') as f:
             json.dump(x, f)
@@ -61,39 +63,14 @@ class group():
         line_bot_api.reply_message(rptoken, msg)
 
     def exp_up(self, usid, num):
-        if usid in self.member:
-            x = self.member[usid]
-            x["exp"] += num
-        else:
-            x = {"level" : 1, "exp" : num}
+        self.exp += num
         up = False
-        while x["exp"] >= pow(x["level"], 2) + 10:
-            x["exp"] -= pow(x["level"], ) + 10
-            x["level"] += 1
+        while self.exp >= pow(self.level, 2) + 10:
+            self.exp -= pow(self.level, 2) + 10
+            self.level += 1
             up = True
-        if self.flag and up:
-            self.txt.append("%s 等級提升到 %d 等!" % (self.flag.display_name, x["level"]))
-        self.member[usid] = x
-    
-    def damage(self, gpid, usid, typ):
-        x = self.member[usid]
-        dmg = random.randint(5000,10000)
-        sd = random.choice(["","爆擊"])
-        if sd == "爆擊":
-            dmg *= (1.2 + x["level"]*0.1)
-            dmg = int(dmg)
-        self.hp -= dmg
-        if self.hp <= 0:
-            self.txt.append("我選擇死亡!")
-            #self.exp_up(usid, 75)
-            self.hp = 10000
-            self.death = True
-            #self.dmg_cd = 
-        else:
-            tt = "不要再打我啦!\n\n%s 打出了 %d點%s%s傷害!" % (self.flag.display_name, dmg, sd, typ)
-            self.txt.append(tt + "\n\n剩餘血量 : %d點" % (self.hp))
-        self.save(gpid)
-
+        if up:
+            self.txt.append("%s 等級提升到 %d 等!" % (self.name,self.level))
 
 
 
@@ -119,43 +96,43 @@ def handle_message(event):
     if event.message.type == 'text':
         rptoken = event.reply_token
         usid = event.source.user_id
+        us = user(usid)
         msg = event.message.text
-        if event.source.type == "group":
-            gpid = event.source.group_id
-            gp = group(gpid, usid)
-            if msg == "#魔法攻擊" or msg == "#物理攻擊":
-                if gp.flag:
-                    gp.damage(gpid, usid, msg[0:2])
+        if "你好" in msg or "妳好" in msg:
+            us.txt.append("妳好啊! %s" % (us.name))
+            us.reply(rptoken)
+        elif msg == "#level":
+            us.txt.append("%s\nlevel -> %d \nexp -> %d" % (us.name, us.level, us.exp))
+            us.reply(rptoken)
+        elif "#rename " in msg:
+            tt = msg.split()
+            name = ""
+            for i in range(1,len(tt)):
+                if i > 1:
+                    name += " "
+                name += tt[i]
+            us.name = name
+            us.save(usid)
+            us.txt.append("%s\n名字已更新完畢" % (us.name))
+            us.reply(rptoken)
+        elif msg == "自爆" or msg == "友盡":
+            if us.level < 5:
+                us.txt.append("你太弱了!")
+            else:
+                us.level = 1; us.exp = 0
+                us.save(usid)
+                if event.source.type == "group":
+                    gpid = event.source.group_id
+                    us.txt.append("再...再見")
+                    us.reply(rptoken)
+                    line_bot_api.leave_group(gpid)
                 else:
-                    gp.txt.append("你無法與我為敵!")
-            elif "野" in msg:
-                s = ""
-                for i in msg:
-                    if i == "野":
-                        s += "格"
-                    else:
-                        s += i
-                gp.txt.append(s)
-            elif msg == "自爆" or msg =="友盡":
-                if gp.flag:
-                    gp.txt.append("再...再見")
-                    gp.death = True
-                else:
-                    gp.txt.append("你太弱了!")
-            elif "你好" in msg or "妳好" in msg:
-                if gp.flag:
-                    gp.txt.append("妳好啊! %s" % (gp.flag.display_name))
-                else:
-                    gp.txt.append("妳好啊!")
-            elif msg == "#level":
-                if gp.flag:
-                    x = gp.member[usid]
-                    gp.txt.append("%s\nlevel -> %d \nexp -> %d" %(gp.flag.display_name, x["level"], x["exp"]))
-                else:
-                    gp.txt.append("加入好友解鎖功能")
-            gp.reply(rptoken)
-            if gp.death:
-                line_bot_api.leave_group(gpid)
+                    us.txt.append("你...你怎麼這樣對我")
+                    us.reply(rptoken)
+        try:
+            us.reply(rptoken)
+        except:
+            pass
 
 import os
 if __name__ == "__main__":
